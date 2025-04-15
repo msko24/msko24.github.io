@@ -27,15 +27,6 @@ header{
     padding: 1%;
 }
 
-#check-age{
-    text-align: left;
-    border: #B7B7B7 solid;
-    margin:1% 0;
-    border-radius: 5px;
-    display: inline-block;
-    background-color: white;
-}
-
 nav{
     padding: 3% 0;
     background-color: #B7B7B7;
