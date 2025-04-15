@@ -33,7 +33,7 @@ if (min<10){
 }
 
 document.getElementById("time-date").innerHTML=
-    `<h3>${time+ampm}</h3>
+    `<h3>${" "+time+ampm}</h3>
      <h5>${month+"/"+day+"/"+year}</h5>
     `
 ;
