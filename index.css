@@ -31,7 +31,7 @@ nav{
     padding: 3% 0;
     background-color: #B7B7B7;
     font-size: calc(1px + 1vw);
-    width: 30%;
+    width: 100%;
     height: 150vh;
 }
 
@@ -65,7 +65,7 @@ main{
     text-align: center;
     padding: 1%;
     height: 150vh;
-    width: 70%
+    width: 100%
 }
 
 img {
