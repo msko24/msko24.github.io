@@ -118,22 +118,32 @@ hr{
 
 /* MEDIA QUERIES */
 
-@media screen and (max-width: 750px) {
     #container{
-        flex-direction: column;}
+        flex-direction: column;
+    }
     header {
-        text-align: center;}
+        text-align: center;
+    }
+
     nav{
-        width: 90%;
-        height: 20%;}
+        width: 100%;
+        height: 20%;
+    }
+
     main{
-        width: 90%;}
+        width: 100%;
+    }
+
     nav ul{
-        width:90%;
+        width:100%;
         margin:0 auto;
         padding: 1% 1% 1% 0;
-        flex-direction: row;}
+        flex-direction: row;
+    }
+
     nav li{
         display:inline;
         padding: 0 0.5%;
-        margin: 0.5%;}
+        margin: 0.5%;
+    }
+}
