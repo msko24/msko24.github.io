@@ -124,12 +124,12 @@ hr{
     header {
         text-align: center;}
     nav{
-        width: 100%;
+        width: 90%;
         height: 20%;}
     main{
-        width: 100%;}
+        width: 90%;}
     nav ul{
-        width:100%;
+        width:90%;
         margin:0 auto;
         padding: 1% 1% 1% 0;
         flex-direction: row;}
