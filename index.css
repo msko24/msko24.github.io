@@ -7,6 +7,7 @@
     margin: 0 auto;
     width: 80vw;
     font-family: Verdana, sans-serif;
+    border: solid 1px black;
 }
 
 #container{
@@ -14,9 +15,8 @@
     display: flex;
     flex-direction: row;
     position: relative;
-    visibility: hidden;
-    height: 100vh;
-    background-color: #EDDFE0;
+    height: 150vh;
+    background-color: #f3c3e1;
 }
 
 header{
@@ -31,8 +31,8 @@ nav{
     padding: 3% 0;
     background-color: #B7B7B7;
     font-size: calc(1px + 1vw);
-    width: 100%;
-    height: 100vh;
+    width: 30%;
+    height: 150vh;
 }
 
 nav ul{
@@ -51,7 +51,7 @@ nav li{
     padding: 1% 2%;
     font-size: calc(3px + 2vw);
     border: 3px solid #545454;
-    background-color: #EDDFE0;
+    background-color: #f3c3e1;
 }
 
 nav a{
@@ -60,18 +60,22 @@ nav a{
 }
 
 main{
-    background-color: #EDDFE0;
+    background-color: #f3c3e1;
     font-size: calc(1px + 1vw);
     text-align: center;
     padding: 1%;
-    height: 100vh;
-    width: 100%
+    height: 150vh;
+    width: 70%
 }
 
+#welcome {
+    font-size: calc(1.5px + 1.5vw);
+}
 img {
     display: block;
-    padding: 5%;
+    padding: 0;
     max-width: 100%;
+    border: solid 3px bisque;
 }
 
 main h2{
@@ -89,7 +93,7 @@ footer{
 }
 
 footer a{
-    color: #EDDFE0;
+    color: #f3c3e1;
 }
 
 #time-date{
@@ -129,9 +133,5 @@ footer a{
         display:inline;
         padding: 0 0.5%;
         margin: 0.5%;
-    }
-
-    #check-age{
-        text-align: center;
     }
 }
