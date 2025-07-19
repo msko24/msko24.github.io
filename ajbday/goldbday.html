@@ -100,23 +100,27 @@
     }
 
     function saveNotes() {
-      const posts = [...document.querySelectorAll('.post-it')].map(post => post.textContent);
+      const posts = [...document.querySelectorAll('.post-it')].map(post => ({
+        text: post.textContent,
+        color: post.style.backgroundColor
+      }));
       localStorage.setItem('goldenPosts', JSON.stringify(posts));
     }
 
     
 
-    function addMemory(text = null) {
+    function addMemory(text = null, color = null) {
       const input = document.getElementById("memoryInput");
       const memory = text || input.value.trim();
       if (memory) {
         const post = document.createElement("div");
         post.className = "post-it";
-        post.style.backgroundColor = randomColor();
+        post.style.backgroundColor = color || randomColor();
         post.textContent = memory;
         document.getElementById("board").appendChild(post);
         if (!text) input.value = "";
         saveNotes();
+      }
       }
     }
 
@@ -131,7 +135,7 @@
 
     function loadSavedNotes() {
       const saved = JSON.parse(localStorage.getItem('goldenPosts')) || [];
-      saved.forEach(mem => addMemory(mem));
+      saved.forEach(({ text, color }) => addMemory(text, color));
     }
 
     setInterval(updateClock, 1000);
