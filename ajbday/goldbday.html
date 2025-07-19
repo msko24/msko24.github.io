@@ -10,6 +10,8 @@
       font-family: 'Trebuchet MS', sans-serif;
       background: #f4f1ea;
       color: #333;
+      max-height: 100vh;
+      overflow-y: auto;
     }
     header {
       background: linear-gradient(135deg, #ffd1dc 0%, #ffe6f0 100%);
@@ -33,7 +35,7 @@
       position: relative;
       border-radius: 5px;
       font-size: 1em;
-      white-space: pre-wrap;
+      flex-shrink: 0;
     }
     .post-it::before {
       content: '';
@@ -44,6 +46,9 @@
       position: absolute;
       top: 5px;
       left: 5px;
+    }
+    .note-text {
+      white-space: pre-wrap;
     }
     .form-section {
       text-align: center;
@@ -77,6 +82,19 @@
       color: #666;
       font-weight: bold;
     }
+    .board {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px;
+      max-height: 60vh;
+      overflow-y: auto;
+      background-color: #a0522d;
+      background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+      border-top: 3px solid #e8d4c0;
+      border-bottom: 3px solid #e8d4c0;
+    }
   </style>
 </head>
 <body>
@@ -101,13 +119,11 @@
 
     function saveNotes() {
       const posts = [...document.querySelectorAll('.post-it')].map(post => ({
-        text: post.textContent,
+        text: post.querySelector('.note-text').textContent,
         color: post.style.backgroundColor
       }));
       localStorage.setItem('goldenPosts', JSON.stringify(posts));
     }
-
-    
 
     function addMemory(text = null, color = null) {
       const input = document.getElementById("memoryInput");
@@ -116,11 +132,15 @@
         const post = document.createElement("div");
         post.className = "post-it";
         post.style.backgroundColor = color || randomColor();
-        post.textContent = memory;
+
+        const textNode = document.createElement("div");
+        textNode.className = "note-text";
+        textNode.textContent = memory;
+        post.appendChild(textNode);
+
         document.getElementById("board").appendChild(post);
         if (!text) input.value = "";
         saveNotes();
-      }
       }
     }
 
