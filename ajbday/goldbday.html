@@ -27,7 +27,7 @@
             width: 200px;
             min-height: 150px;
             margin: 15px;
-            padding: 15px 20px 15px 15px;
+            padding: 15px;
             box-shadow: 3px 3px 8px rgba(0,0,0,0.2);
             transform: rotate(-1deg);
             position: relative;
@@ -44,16 +44,6 @@
             position: absolute;
             top: 5px;
             left: 5px;
-        }
-        .delete-btn {
-            position: absolute;
-            top: 5px;
-            right: 8px;
-            background: none;
-            border: none;
-            font-weight: bold;
-            color: #900;
-            cursor: pointer;
         }
         .form-section {
             text-align: center;
@@ -93,7 +83,7 @@
 <header>Old Friends Silver, Best Friend Gold</header>
 
 <div class="form-section">
-    <p>Post each time Maddie appreciated her golden friend:</p>
+    <p>Share a moment when you appreciated your golden friend:</p>
     <textarea id="memoryInput" placeholder="Type your memory here..."></textarea><br/>
     <button onclick="addMemory()">Pin It</button>
 </div>
@@ -127,13 +117,7 @@
             post.className = "post-it";
             post.style.backgroundColor = randomColor();
 
-            const delBtn = document.createElement("button");
-            delBtn.className = "delete-btn";
-            delBtn.innerHTML = "&times;";
-            delBtn.onclick = () => deletePost(delBtn);
 
-            post.textContent = memory;
-            post.appendChild(delBtn);
             document.getElementById("board").appendChild(post);
 
             if (!text) input.value = "";
@@ -160,4 +144,3 @@
     loadSavedNotes();
 </script>
 </body>
-</html>
