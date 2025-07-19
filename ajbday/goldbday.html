@@ -63,7 +63,7 @@
       margin-top: 10px;
       padding: 10px 20px;
       font-size: 1em;
-      background-color: #d6cfc7;
+      background-color: #ffd1dc;
       border: none;
       border-radius: 5px;
       cursor: pointer;
@@ -83,7 +83,7 @@
   <header>Old Friends Silver, Best Friend Gold</header>
 
   <div class="form-section">
-    <p>Share a moment when Maddie appreciated her golden friend:</p>
+    <p>Share a moment when you appreciated your golden friend:</p>
     <textarea id="memoryInput" placeholder="Type your memory here..."></textarea><br/>
     <button onclick="addMemory()">Pin It</button>
   </div>
@@ -116,8 +116,6 @@
         post.textContent = memory;
         document.getElementById("board").appendChild(post);
         if (!text) input.value = "";
-        saveNotes();
-      }
         saveNotes();
       }
     }
