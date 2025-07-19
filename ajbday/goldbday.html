@@ -1,146 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Old Friends Silver, Best Friend Gold</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Trebuchet MS', sans-serif;
-            background: #f4f1ea;
-            color: #333;
-        }
-        header {
-            background: linear-gradient(135deg, #ffd1dc 0%, #ffe6f0 100%);
-            color: #6b2f3f;
-            padding: 30px;
-            text-align: center;
-            font-size: 2.5em;
-            font-weight: bold;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            letter-spacing: 1px;
-            border-bottom: 4px solid #f8c8d0;
-            font-family: 'Georgia', serif;
-        }
-        .post-it {
-            width: 200px;
-            min-height: 150px;
-            margin: 15px;
-            padding: 15px;
-            box-shadow: 3px 3px 8px rgba(0,0,0,0.2);
-            transform: rotate(-1deg);
-            position: relative;
-            border-radius: 5px;
-            font-size: 1em;
-            white-space: pre-wrap;
-        }
-        .post-it::before {
-            content: '';
-            width: 10px;
-            height: 10px;
-            background-color: #c0392b;
-            border-radius: 50%;
-            position: absolute;
-            top: 5px;
-            left: 5px;
-        }
-        .form-section {
-            text-align: center;
-            margin: 20px;
-        }
-        textarea {
-            width: 80%;
-            max-width: 500px;
-            height: 100px;
-            padding: 10px;
-            font-size: 1em;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            resize: none;
-        }
-        button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 1em;
-            background-color: #d6cfc7;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 1px 1px 4px rgba(0,0,0,0.2);
-        }
-        .clock {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            font-size: 1em;
-            color: #666;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Old Friends Silver, Best Friend Gold</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Trebuchet MS', sans-serif;
+      background: #f4f1ea;
+      color: #333;
+    }
+    header {
+      background: linear-gradient(135deg, #ffd1dc 0%, #ffe6f0 100%);
+      color: #6b2f3f;
+      padding: 30px;
+      text-align: center;
+      font-size: 2.5em;
+      font-weight: bold;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      letter-spacing: 1px;
+      border-bottom: 4px solid #f8c8d0;
+      font-family: 'Georgia', serif;
+    }
+    .post-it {
+      width: 200px;
+      min-height: 150px;
+      margin: 15px;
+      padding: 15px;
+      box-shadow: 3px 3px 8px rgba(0,0,0,0.2);
+      transform: rotate(-1deg);
+      position: relative;
+      border-radius: 5px;
+      font-size: 1em;
+      white-space: pre-wrap;
+    }
+    .post-it::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background-color: #c0392b;
+      border-radius: 50%;
+      position: absolute;
+      top: 5px;
+      left: 5px;
+    }
+    .form-section {
+      text-align: center;
+      margin: 20px;
+    }
+    textarea {
+      width: 80%;
+      max-width: 500px;
+      height: 100px;
+      padding: 10px;
+      font-size: 1em;
+      border: 2px solid #ccc;
+      border-radius: 5px;
+      resize: none;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #d6cfc7;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+    }
+    .clock {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      font-size: 1em;
+      color: #666;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-<header>Old Friends Silver, Best Friend Gold</header>
+  <header>Old Friends Silver, Best Friend Gold</header>
 
-<div class="form-section">
+  <div class="form-section">
     <p>Share a moment when you appreciated your golden friend:</p>
     <textarea id="memoryInput" placeholder="Type your memory here..."></textarea><br/>
     <button onclick="addMemory()">Pin It</button>
-</div>
+  </div>
 
-<div class="board" id="board"></div>
+  <div class="board" id="board"></div>
 
-<div class="clock" id="clock"></div>
+  <div class="clock" id="clock"></div>
 
-<script>
+  <script>
     const pastelColors = ["#fffd9e", "#ffd1dc", "#d1f7ff", "#d1ffd6", "#ffe6cc", "#e5d1ff"];
 
     function randomColor() {
-        return pastelColors[Math.floor(Math.random() * pastelColors.length)];
+      return pastelColors[Math.floor(Math.random() * pastelColors.length)];
     }
 
     function saveNotes() {
-        const posts = [...document.querySelectorAll('.post-it')].map(post => post.textContent);
-        localStorage.setItem('goldenPosts', JSON.stringify(posts));
+      const posts = [...document.querySelectorAll('.post-it')].map(post => post.textContent);
+      localStorage.setItem('goldenPosts', JSON.stringify(posts));
     }
 
     function deletePost(el) {
-        el.parentElement.remove();
-        saveNotes();
+      el.parentElement.remove();
+      saveNotes();
     }
 
     function addMemory(text = null) {
-        const input = document.getElementById("memoryInput");
-        const memory = text || input.value.trim();
-        if (memory) {
-            const post = document.createElement("div");
-            post.className = "post-it";
-            post.style.backgroundColor = randomColor();
-
-
-            document.getElementById("board").appendChild(post);
-
-            if (!text) input.value = "";
-            saveNotes();
-        }
+      const input = document.getElementById("memoryInput");
+      const memory = text || input.value.trim();
+      if (memory) {
+        const post = document.createElement("div");
+        post.className = "post-it";
+        post.style.backgroundColor = randomColor();
+        post.textContent = memory;
+        document.getElementById("board").appendChild(post);
+        if (!text) input.value = "";
+        saveNotes();
+      }
+        saveNotes();
+      }
     }
 
     function updateClock() {
-        const now = new Date();
-        let hours = now.getHours();
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12 || 12;
-        document.getElementById("clock").textContent = `Current Time: ${hours}:${minutes} ${ampm}`;
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      document.getElementById("clock").textContent = `Current Time: ${hours}:${minutes} ${ampm}`;
     }
 
     function loadSavedNotes() {
-        const saved = JSON.parse(localStorage.getItem('goldenPosts')) || [];
-        saved.forEach(mem => addMemory(mem));
+      const saved = JSON.parse(localStorage.getItem('goldenPosts')) || [];
+      saved.forEach(mem => addMemory(mem));
     }
 
     setInterval(updateClock, 1000);
     updateClock();
     loadSavedNotes();
-</script>
+  </script>
 </body>
+</html>
