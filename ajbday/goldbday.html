@@ -104,10 +104,7 @@
       localStorage.setItem('goldenPosts', JSON.stringify(posts));
     }
 
-    function deletePost(el) {
-      el.parentElement.remove();
-      saveNotes();
-    }
+    
 
     function addMemory(text = null) {
       const input = document.getElementById("memoryInput");
