@@ -1,0 +1,543 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ASCII Poppies and Lilacs</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #292d42;
+            overflow: hidden;
+            font-family: monospace;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+<canvas id="bouquet"></canvas>
+
+<script>
+    const canvas = document.getElementById("bouquet");
+    const ctx = canvas.getContext("2d");
+
+    let W, H;
+
+    function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+        W = innerWidth;
+        H = innerHeight;
+
+        canvas.width = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    resize();
+    window.addEventListener("resize", resize);
+
+    // ==============================
+    // CUSTOMIZATION
+    // ==============================
+
+    const SETTINGS = {
+        speed: 0.18,
+        size: 1,
+        background: "#292d42",
+        characterGap: 0.12,
+        rowGap: 0.12
+    };
+
+    const COLORS = {
+        poppy: ["#ff424f", "#f73845", "#ff6569", "#da3045"],
+        lilac: ["#c9a1ff", "#b88bea", "#e0bdff", "#a77add"],
+        green: ["#83df83", "#68c978", "#a0f09d", "#4fb56c"],
+        paper: ["#f3dfc4", "#e8cbaa", "#fff0db", "#d7b998"],
+        ribbon: ["#ff86ad", "#f66d9e"],
+        gold: ["#ffd76c", "#f1bf54"]
+    };
+
+    const chars = ["@", "#", "o", "*", "+", "=", ":"];
+    const points = [];
+    const flowers = [];
+
+    const TAU = Math.PI * 2;
+
+    // Seeded randomness keeps the arrangement consistent.
+    let seed = 90210;
+
+    function rand() {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+    }
+
+    function choice(arr) {
+        return arr[Math.floor(rand() * arr.length)];
+    }
+
+    function add(x, y, z, color, char = null, size = 1) {
+        points.push({
+            x, y, z,
+            color,
+            char: char || choice(chars),
+            size
+        });
+    }
+
+    // ==============================
+    // GREEN STEMS
+    // ==============================
+
+    function stem(x, y, z) {
+        for (let i = 0; i <= 27; i++) {
+            const t = i / 27;
+
+            const px = x * (0.1 + t * 0.9);
+            const py = -2.52 + (y + 2.52) * t;
+            const pz = z * (0.1 + t * 0.9);
+
+            add(
+                px, py, pz,
+                choice(COLORS.green),
+                choice(["|", "/", "\\", ":", "+"])
+            );
+        }
+    }
+
+    // ==============================
+    // ASCII LEAVES
+    // ==============================
+
+    function leaf(x, y, z, angle, scale = 1) {
+        const dx = Math.cos(angle);
+        const dz = Math.sin(angle);
+
+        for (let row = 0; row < 9; row++) {
+            const t = row / 8;
+            const width = Math.sin(Math.PI * t) * 0.34 * scale;
+
+            for (let col = -4; col <= 4; col++) {
+                const u = col / 4;
+
+                if (Math.abs(u) * 0.33 * scale > width) continue;
+
+                add(
+                    x + dx * t * 0.7 * scale - dz * u * width,
+                    y + t * 0.28 * scale,
+                    z + dz * t * 0.7 * scale + dx * u * width,
+                    choice(COLORS.green),
+                    choice(["=", "+", "#", "o"])
+                );
+            }
+        }
+    }
+
+    // ==============================
+    // RED ASCII POPPIES
+    // ==============================
+
+    function poppy(x, y, z, scale = 1) {
+        const dots = [];
+
+        const stepX = SETTINGS.characterGap;
+        const stepY = SETTINGS.rowGap;
+
+        const lobes = [];
+
+        for (let i = 0; i < 5; i++) {
+            const a = i * TAU / 5;
+
+            lobes.push({
+                x: Math.cos(a) * 0.34,
+                y: Math.sin(a) * 0.34,
+                rx: 0.45,
+                ry: 0.43
+            });
+        }
+
+        for (let py = -0.83; py <= 0.83; py += stepY) {
+            for (let px = -0.83; px <= 0.83; px += stepX) {
+
+                const inside = lobes.some(l => {
+                    const dx = (px - l.x) / l.rx;
+                    const dy = (py - l.y) / l.ry;
+
+                    return dx * dx + dy * dy < 1;
+                });
+
+                if (!inside) continue;
+                if (rand() < 0.09) continue;
+
+                const distance = Math.hypot(px, py);
+
+                let color;
+                let char;
+
+                if (distance < 0.17) {
+                    color = choice([
+                        "#291b30",
+                        "#3b2635",
+                        "#e5a951"
+                    ]);
+
+                    char = choice(["@", "*", "o"]);
+                } else {
+                    color = choice(COLORS.poppy);
+                    char = choice(["o", "=", "@", "#"]);
+                }
+
+                dots.push({
+                    x: px * scale,
+                    y: py * scale,
+                    z: Math.sin(distance * 3) * 0.08,
+                    color,
+                    char
+                });
+            }
+        }
+
+        flowers.push({x, y, z, dots});
+        stem(x, y, z);
+    }
+
+    // ==============================
+    // PURPLE ASCII LILACS
+    // ==============================
+
+    function lilac(x, y, z, scale = 1) {
+        const dots = [];
+
+        for (let row = 0; row < 17; row++) {
+            const t = row / 16;
+
+            const width =
+                (0.39 * Math.pow(1 - t, 0.65) + 0.025) * scale;
+
+            const py = (t - 0.48) * 1.65 * scale;
+
+            for (
+                let px = -width;
+                px <= width;
+                px += SETTINGS.characterGap
+            ) {
+                if (rand() < 0.13) continue;
+
+                dots.push({
+                    x: px,
+                    y: py,
+                    z: Math.sin(px * 9 + row) * 0.09,
+                    color: choice(COLORS.lilac),
+                    char: choice(["o", "o", "*", "+", ":"])
+                });
+            }
+        }
+
+        flowers.push({x, y, z, dots});
+        stem(x, y, z);
+    }
+
+    // ==============================
+    // FOLDED PAPER WRAPPER
+    // ==============================
+
+    function paperWrapper() {
+        const top = -0.85;
+        const bottom = -2.35;
+        const rows = 22;
+
+        // Wide opening, narrowing to a pointed base.
+        for (let row = 0; row <= rows; row++) {
+            const t = row / rows;
+            const y = top + (bottom - top) * t;
+
+            const radius =
+                1.12 * Math.pow(1 - t, 0.85) + 0.09;
+
+            const count =
+                Math.round(45 * (1 - t) + 7);
+
+            for (let i = 0; i < count; i++) {
+                const a = (i / count) * TAU;
+
+                if (rand() < 0.13) continue;
+
+                const x = Math.cos(a) * radius;
+                const z = Math.sin(a) * radius;
+
+                const fold =
+                    Math.floor(a / (Math.PI / 3)) % 3;
+
+                const color = [
+                    "#fff1d7",
+                    "#d8c2a6",
+                    "#eee0cc"
+                ][fold];
+
+                add(
+                    x,
+                    y + Math.sin(a * 3) * 0.035 * (1 - t),
+                    z,
+                    color,
+                    choice(["=", "-", ":", "+"])
+                );
+            }
+        }
+
+        // Thin diagonal creases in the paper.
+        for (let fold = 0; fold < 6; fold++) {
+            const a = fold * Math.PI / 3;
+
+            for (let i = 0; i < 17; i++) {
+                const t = i / 16;
+                const y = top + (bottom - top) * t;
+
+                const radius =
+                    1.12 * Math.pow(1 - t, 0.85) + 0.09;
+
+                add(
+                    Math.cos(a) * radius,
+                    y,
+                    Math.sin(a) * radius,
+                    "#cbb89e",
+                    choice(["/", "\\", "|"])
+                );
+            }
+        }
+
+        // ==============================
+        // PINK RIBBON
+        // ==============================
+
+        for (let row = 0; row < 4; row++) {
+            const y = -2.25 + row * 0.065;
+
+            for (let i = 0; i < 22; i++) {
+                const a = i * TAU / 22;
+
+                add(
+                    Math.cos(a) * 0.24,
+                    y,
+                    Math.sin(a) * 0.24,
+                    choice([
+                        "#ff87b2",
+                        "#f46d9e",
+                        "#ffc0d6"
+                    ]),
+                    choice(["o", "=", "*"])
+                );
+            }
+        }
+
+        // Bow loops.
+        for (const side of [-1, 1]) {
+            for (let i = 0; i < 16; i++) {
+                const a = i * TAU / 16;
+
+                add(
+                    side * 0.24 + Math.cos(a) * 0.18,
+                    -2.17 + Math.sin(a) * 0.12,
+                    0.28,
+                    "#ff94bd",
+                    choice(["o", "+", "*"])
+                );
+            }
+        }
+
+        // Hanging ribbon ends.
+        for (let i = 0; i < 10; i++) {
+            const t = i / 9;
+
+            add(
+                -0.10 - t * 0.18,
+                -2.28 - t * 0.44,
+                0.3,
+                "#ff85ae",
+                "+"
+            );
+
+            add(
+                0.10 + t * 0.15,
+                -2.28 - t * 0.35,
+                0.3,
+                "#f56d9f",
+                "+"
+            );
+        }
+
+        // ==============================
+        // STEMS BELOW THE WRAPPER
+        // ==============================
+
+        for (let stemIndex = 0; stemIndex < 5; stemIndex++) {
+            const angle = stemIndex * TAU / 5;
+
+            for (let i = 0; i < 15; i++) {
+                const t = i / 14;
+
+                add(
+                    Math.cos(angle) * 0.075,
+                    -2.32 - t * 0.75,
+                    Math.sin(angle) * 0.075,
+                    choice(COLORS.green),
+                    choice(["|", ":", "+"])
+                );
+            }
+        }
+    }
+
+    // ==============================
+    // FLOWER ARRANGEMENT
+    // ==============================
+
+    const arrangement = [
+        {type:"p", x:-0.78, y: 0.62, z: 0.82, s:0.71},
+        {type:"l", x:-0.25, y: 1.52, z:-0.56, s:0.80},
+        {type:"p", x: 0.78, y: 0.72, z: 0.75, s:0.75},
+        {type:"l", x: 1.12, y: 1.07, z:-0.27, s:0.73},
+
+        {type:"p", x:-1.12, y: 1.13, z:-0.18, s:0.69},
+        {type:"l", x:-1.40, y: 0.22, z: 0.28, s:0.70},
+        {type:"p", x: 0.20, y: 1.38, z:-0.95, s:0.72},
+        {type:"l", x: 0.37, y: 0.39, z: 0.98, s:0.71},
+
+        {type:"p", x: 1.23, y: 0.12, z:-0.23, s:0.70},
+        {type:"l", x:-0.38, y: 0.27, z:-1.00, s:0.74},
+        {type:"p", x: 0.78, y: 1.36, z:-0.73, s:0.67},
+        {type:"l", x:-0.91, y: 0.79, z:-0.86, s:0.70}
+    ];
+
+    for (const f of arrangement) {
+        if (f.type === "p") {
+            poppy(f.x, f.y, f.z, f.s);
+        } else {
+            lilac(f.x, f.y, f.z, f.s);
+        }
+    }
+
+    // Add green foliage.
+    for (let i = 0; i < 13; i++) {
+        const a = i * TAU / 13;
+
+        leaf(
+            Math.cos(a) * 0.53,
+            -0.87 + (i % 3) * 0.23,
+            Math.sin(a) * 0.53,
+            a,
+            0.8 + (i % 3) * 0.1
+        );
+    }
+
+    paperWrapper();
+
+    // ==============================
+    // 3D PROJECTION
+    // ==============================
+
+    function project(x, y, z, angle, scale) {
+        const c = Math.cos(angle);
+        const s = Math.sin(angle);
+
+        const rx = x * c + z * s;
+        const rz = -x * s + z * c;
+
+        const perspective = 8 / (8 - rz);
+
+        return {
+            x: W / 2 + rx * scale * perspective,
+            y: H / 2 - (y + 0.25) * scale * perspective,
+            z: rz,
+            perspective
+        };
+    }
+
+    // ==============================
+    // AUTOMATIC ANIMATION
+    // ==============================
+
+    const startTime = performance.now();
+    let lastFrame = 0;
+
+    function animate(now) {
+        requestAnimationFrame(animate);
+
+        // Limit rendering to approximately 30 FPS.
+        if (now - lastFrame < 33) return;
+        lastFrame = now;
+
+        ctx.fillStyle = SETTINGS.background;
+        ctx.fillRect(0, 0, W, H);
+
+        const elapsed = (now - startTime) / 1000;
+        const angle = elapsed * SETTINGS.speed;
+
+        const scale =
+            Math.min(W / 5.8, H / 6.6) * SETTINGS.size;
+
+        const visible = [];
+
+        // Rotate paper, leaves, and stems in 3D.
+        for (const p of points) {
+            const q = project(p.x, p.y, p.z, angle, scale);
+
+            visible.push({
+                ...q,
+                char: p.char,
+                color: p.color,
+                font: 11 * q.perspective
+            });
+        }
+
+        // Rotate flower positions around the bouquet.
+        // Keep their horizontal ASCII rows facing forward.
+        for (const f of flowers) {
+            const center = project(f.x, f.y, f.z, angle, scale);
+
+            for (const d of f.dots) {
+                visible.push({
+                    x: center.x + d.x * scale * center.perspective,
+                    y: center.y - d.y * scale * center.perspective,
+                    z: center.z + d.z,
+                    char: d.char,
+                    color: d.color,
+                    font: 11 * center.perspective
+                });
+            }
+        }
+
+        // Draw farthest characters first.
+        visible.sort((a, b) => a.z - b.z);
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        for (const p of visible) {
+            if (
+                p.x < -20 || p.x > W + 20 ||
+                p.y < -20 || p.y > H + 20
+            ) continue;
+
+            ctx.fillStyle = p.color;
+            ctx.font = `${Math.max(7, p.font)}px monospace`;
+            ctx.fillText(p.char, p.x, p.y);
+        }
+    }
+
+    requestAnimationFrame(animate);
+</script>
+</body>
+</html>
